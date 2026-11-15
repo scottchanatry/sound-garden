@@ -1,77 +1,149 @@
 <!doctype html>
 <meta charset="utf-8">
+<!--
+  "Plate", final: a page from a botanical plate book, 1080 x 1350.
+  The real recorded app plays in a phone (screen 508 x 1100) on the right of a cream page; on the left the
+  wordmark, one Fraunces-italic figure caption that changes with the story (four in a loop), and the app's own
+  wild rose drawn in faint outline. Everything that moves is computed from the frame's time.
+  Optional in the score: "stillCaption": <index> pins one caption at full opacity (used for the static picture).
+-->
 <style>
-  :root { --paper: #F6F3E7; --sage: #DDE8D0; --leaf: #2C6145; --ink: #1F3D2E; }
-  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+  @font-face { font-family: 'Fraunces'; font-style: normal; src: url('../../assets/fonts/Fraunces-Regular.ttf'); }
+  @font-face { font-family: 'Fraunces'; font-style: italic; src: url('../../assets/fonts/Fraunces-Italic.ttf'); }
+  :root { --paper: #FAF8EE; --ink: #1F3D2E; --soft: #6C8A72; --hair: #C3D1B8; }
+  html, body { margin: 0; width: 1080px; height: 1350px; overflow: hidden; }
   body {
+    position: relative;
     background:
-      radial-gradient(70% 55% at 22% 12%, #FFFDF4 0%, rgba(255,253,244,0) 70%),
-      radial-gradient(80% 60% at 85% 95%, #CFE0C0 0%, rgba(207,224,192,0) 70%),
-      linear-gradient(160deg, #F4F1E2 0%, #E6EEDA 55%, #D7E5CB 100%);
-    display: grid; place-items: center;
+      radial-gradient(62% 46% at 80% 92%, rgba(203,225,193,.62) 0%, rgba(203,225,193,0) 72%),
+      radial-gradient(50% 36% at 8% 4%, #FFFEF9 0%, rgba(255,254,249,0) 70%),
+      var(--paper);
+    font-family: 'Fraunces', serif; color: var(--ink);
+    -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
   }
-  svg.leaves { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .plate { position: absolute; inset: 34px; border: 1.5px solid rgba(31,61,46,.13); border-radius: 8px; background: rgba(255,255,255,.30); }
+
+  .wordmark { position: absolute; left: 96px; top: 1146px; font-size: 44px; line-height: 52px; letter-spacing: -.014em; white-space: nowrap; }
+  .wordmark i { font-style: italic; }
+  .head-rule { position: absolute; left: 97px; top: 1120px; width: 46px; height: 1.5px; background: var(--hair); }
+
+  .legend { position: absolute; left: 96px; top: 600px; width: 340px; }
+  .fig { position: relative; height: 36px; font-size: 30px; line-height: 36px; letter-spacing: .04em; color: rgba(31,61,46,.70); white-space: nowrap; }
+  .fig #figs { position: absolute; left: 64px; top: 0; }
+  #figs span { position: absolute; left: 0; top: 0; }
+  .caption { position: absolute; left: 0; top: 66px; font-style: italic; font-size: 52px; line-height: 62px; letter-spacing: -.012em; white-space: nowrap; }
+
+  .rose { position: absolute; left: 84px; top: 150px; width: 270px; height: 270px; color: var(--ink); opacity: .2; transform-origin: 50% 50%; }
+  .rose svg { width: 100%; height: 100%; overflow: visible; }
+
   .phone {
-    position: relative; width: 508px; height: 1100px; padding: 13px; border-radius: 74px;
-    background: linear-gradient(145deg, #2A3A31 0%, #17231C 60%, #101A14 100%);
+    position: absolute; left: 474px; top: 113px; width: 508px; height: 1100px; padding: 12px; border-radius: 74px;
+    background: linear-gradient(145deg, #2C3D33 0%, #1A271F 60%, #121C16 100%);
     box-shadow:
-      0 0 0 1.5px rgba(255,255,255,.35) inset,
+      0 0 0 1.5px rgba(255,255,255,.32) inset,
       0 2px 0 1px rgba(16,26,20,.9),
-      0 60px 90px -30px rgba(31,61,46,.45),
-      0 30px 40px -20px rgba(31,61,46,.30),
-      0 0 0 1px rgba(31,61,46,.25);
+      0 56px 80px -34px rgba(31,61,46,.38),
+      0 26px 34px -20px rgba(31,61,46,.24),
+      0 0 0 1px rgba(31,61,46,.22);
   }
-  .screen { position: relative; width: 508px; height: 1100px; border-radius: 62px; overflow: hidden; background: var(--paper); }
-  .screen img { display: block; width: 100%; height: 100%; }
-  .island { position: absolute; top: 15px; left: 50%; width: 118px; height: 32px; margin-left: -59px; border-radius: 16px; background: #0D1410; }
-  .touch { position: absolute; width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%;
-           background: rgba(31,61,46,.16); border: 2.5px solid rgba(31,61,46,.38); box-shadow: 0 0 0 10px rgba(31,61,46,.05); }
+  .screen { position: relative; width: 508px; height: 1100px; border-radius: 62px; overflow: hidden; background: #FDFBF3; }
+  .screen img { display: block; width: 508px; height: 1100px; }
+  .island { position: absolute; top: 15px; left: 50%; width: 117px; height: 33px; margin-left: -58.5px; border-radius: 16.5px; background: #0D1410; }
+  .touch { position: absolute; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%;
+           background: rgba(31,61,46,.15); border: 2px solid rgba(31,61,46,.42);
+           box-shadow: 0 0 0 2px rgba(255,255,255,.55), 0 0 0 10px rgba(31,61,46,.05); }
 </style>
-<svg class="leaves" viewBox="0 0 1080 1350" fill="none" stroke="#9DB98F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" opacity=".55">
-  <!-- left sprig -->
-  <g transform="translate(40 1120) rotate(-14)">
-    <path d="M0 200 C 40 120, 70 40, 150 -60"/>
-    <path d="M28 150 c -34 -8 -52 -34 -54 -62 c 30 4 52 26 54 62 z"/>
-    <path d="M52 108 c 36 -2 60 -24 68 -52 c -32 0 -58 20 -68 52 z"/>
-    <path d="M78 62 c -34 -12 -48 -40 -46 -68 c 30 8 48 32 46 68 z"/>
-    <path d="M106 14 c 34 -6 54 -30 58 -58 c -30 4 -52 26 -58 58 z"/>
-    <path d="M128 -26 c -30 -14 -42 -40 -38 -66 c 28 10 42 32 38 66 z"/>
-  </g>
-  <!-- right sprig -->
-  <g transform="translate(1010 250) rotate(162)">
-    <path d="M0 200 C 40 120, 70 40, 150 -60"/>
-    <path d="M28 150 c -34 -8 -52 -34 -54 -62 c 30 4 52 26 54 62 z"/>
-    <path d="M52 108 c 36 -2 60 -24 68 -52 c -32 0 -58 20 -68 52 z"/>
-    <path d="M78 62 c -34 -12 -48 -40 -46 -68 c 30 8 48 32 46 68 z"/>
-    <path d="M106 14 c 34 -6 54 -30 58 -58 c -30 4 -52 26 -58 58 z"/>
-    <path d="M128 -26 c -30 -14 -42 -40 -38 -66 c 28 10 42 32 38 66 z"/>
-  </g>
-  <!-- small sprig, lower right -->
-  <g transform="translate(930 1260) rotate(28) scale(.7)">
-    <path d="M0 200 C 40 120, 70 40, 150 -60"/>
-    <path d="M28 150 c -34 -8 -52 -34 -54 -62 c 30 4 52 26 54 62 z"/>
-    <path d="M52 108 c 36 -2 60 -24 68 -52 c -32 0 -58 20 -68 52 z"/>
-    <path d="M78 62 c -34 -12 -48 -40 -46 -68 c 30 8 48 32 46 68 z"/>
-    <path d="M106 14 c 34 -6 54 -30 58 -58 c -30 4 -52 26 -58 58 z"/>
-  </g>
-</svg>
+
+<div class="plate"></div>
+
+<div class="legend">
+  <div class="fig">Fig.<span id="figs"></span></div>
+  <div id="captions"></div>
+</div>
+
+<div class="rose" id="rose"><svg viewBox="0 0 64 64">
+<path d="M32 32C32.73 20.93 38.97 14.04 49.81 8.96C47.88 22.07 42.64 29.86 32 32ZM32 32C41.8 36.93 45.6 45.21 45.96 56.92C34.67 50.17 29.65 42.44 32 32ZM32 32C22.39 37.05 13.36 34.18 3.51 24.84C15.11 22.31 24.34 23.86 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M35.82 27.63Q40.95 21.31 45.83 14.76M34.44 37.14Q38.15 44.21 42.21 51.12M26.23 31.03Q18.22 29.28 10.27 27.08" fill="none" stroke="currentColor" stroke-width="0.77" opacity="1"/>
+<path d="M32 32C29.45 28.17 23.16 22.29 22.86 16.28C22.42 11.65 23.26 8.47 26.49 8.65C29.01 8.79 30.37 9.61 31.24 10.76C31.81 9.69 32.96 9.01 35.48 9.15C38.72 9.33 40.39 12.65 40.83 17.29C41.13 23.29 34.84 28.47 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M32 32C34.38 28.33 37.24 20.8 42.65 19.21C46.84 18.08 50.21 18.53 51.29 21.59C52.12 23.96 51.87 25.32 51.09 26.25C52.34 26.67 53.44 27.7 54.28 30.07C55.35 33.13 52.82 35.06 48.62 36.19C43.22 37.78 36.17 33.42 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M32 32C36.18 33.7 44.32 35.12 47.24 40.26C49.42 44.24 49.85 47.7 47.09 49.39C44.94 50.7 43.52 50.72 42.39 50.13C42.29 51.47 41.56 52.77 39.41 54.08C36.64 55.77 34.06 53.62 31.87 49.63C28.96 44.5 31.57 36.52 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M32 32C32.01 36.48 33.84 44.57 30.44 49.26C27.86 52.88 25.07 54.67 22.49 52.71C20.48 51.19 19.88 49.85 19.92 48.53C18.74 48.97 17.32 48.8 15.32 47.27C12.74 45.31 13.52 42 16.11 38.37C19.51 33.69 27.71 33.21 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M32 32C27.56 32.97 20 36.47 14.6 34C10.45 32.07 8.07 29.57 9.38 26.61C10.41 24.3 11.58 23.46 12.87 23.27C12.17 22.15 12.02 20.69 13.04 18.38C14.36 15.42 17.77 15.63 21.92 17.55C27.32 20.03 29.76 28.04 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M32.17 24.18Q32.1 21.41 31.97 18.63M38.98 29.67Q41.47 28.91 43.97 28.17M35.95 38.63Q37.32 40.99 38.67 43.36M27.47 38.06Q25.89 40.21 24.32 42.37M24.91 28.82Q22.42 27.68 19.92 26.54M33.67 27.28L34.89 24.44M36.39 29.61L38.23 28.46M36.25 34.65L38.27 36.14M33.52 36.77L34.38 38.9M28.79 35.84L27.59 37.55M27.02 31.46L24.65 30.96M28.47 28.44L26.75 27.02" fill="none" stroke="currentColor" stroke-width="0.77" opacity="0.35"/>
+<path d="M32 37C29.24 37 27 34.76 27 32C27 29.24 29.24 27 32 27C34.76 27 37 29.24 37 32C37 34.76 34.76 37 32 37Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M34.54 25.22C34.09 25.08 33.88 24.62 34.08 24.19C34.28 23.75 34.8 23.52 35.25 23.66C35.7 23.8 35.9 24.26 35.7 24.69C35.51 25.12 34.99 25.36 34.54 25.22ZM37.59 28.87C37.41 28.5 37.54 28.01 37.89 27.79C38.24 27.56 38.68 27.67 38.86 28.05C39.04 28.42 38.91 28.91 38.56 29.14C38.21 29.36 37.77 29.24 37.59 28.87ZM37.58 35.61C37.81 35.19 38.31 35.09 38.69 35.38C39.07 35.68 39.19 36.27 38.96 36.69C38.73 37.1 38.24 37.2 37.86 36.9C37.47 36.6 37.35 36.03 37.58 35.61ZM34.09 38.21C34.48 38.11 34.93 38.34 35.09 38.72C35.26 39.09 35.07 39.49 34.68 39.59C34.28 39.69 33.83 39.47 33.66 39.09C33.5 38.71 33.69 38.32 34.09 38.21ZM28 36.94C28.3 37.22 28.35 37.72 28.12 38.06C27.9 38.4 27.48 38.45 27.18 38.18C26.89 37.9 26.83 37.4 27.06 37.05C27.28 36.71 27.71 36.66 28 36.94ZM25.52 31.16C25.5 31.65 25.09 31.95 24.61 31.84C24.13 31.72 23.76 31.22 23.78 30.74C23.8 30.25 24.2 29.96 24.69 30.08C25.17 30.19 25.54 30.68 25.52 31.16ZM27.32 27.48C27.02 27.74 26.52 27.74 26.2 27.49C25.88 27.25 25.86 26.84 26.16 26.58C26.46 26.32 26.97 26.3 27.29 26.55C27.61 26.8 27.62 27.22 27.32 27.48Z" fill="currentColor" stroke="none"/>
+</svg></div>
+
+<div class="head-rule"></div>
+<div class="wordmark">Sound <i>Garden</i></div>
+
 <div class="phone">
   <div class="screen"><img id="frame" alt=""><div class="island"></div><div id="touches"></div></div>
 </div>
+
 <script>
   const img = document.getElementById('frame');
   const touches = document.getElementById('touches');
+  const figs = document.getElementById('figs');
+  const captions = document.getElementById('captions');
+  const rose = document.getElementById('rose');
   const SCREEN_W = 508;
-  // A tap shows as a soft disc that appears just before the tap and fades after it.
-  const LEAD = 0.10, TAIL = 0.34;
+  const LEAD = 0.10, TAIL = 0.32;              // a tap's soft disc comes down just before the touch and lifts after it
+  const WAIT = 0.24, IN = 0.36, OUT = 0.26;    // a caption leaves upward first; the next comes up after it
+
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
+  const ease = (v) => v * v * (3 - 2 * v);
+  let built = false;
+
+  function build(score) {
+    for (const c of score.captions || []) {
+      const n = document.createElement('span');
+      n.textContent = c.fig;
+      figs.appendChild(n);
+      const d = document.createElement('div');
+      d.className = 'caption';
+      d.innerHTML = c.lines.map((line) => line.replace(/&/g, '&amp;').replace(/</g, '&lt;')).join('<br>');
+      captions.appendChild(d);
+    }
+    built = true;
+  }
+
   window.renderFrame = async ({ t, frameUrl, score }) => {
+    if (!built) build(score);
     img.src = frameUrl;
     await img.decode();
-    const k = SCREEN_W / (score.width || 390);
+    await document.fonts.ready;
+
+    const loop = score.loop || 16;
     const now = t + (score.start || 0);
+    const story = (((now - (score.storyStart || 0)) % loop) + loop) % loop;   // seconds since the last Clear
+
+    (score.captions || []).forEach((c, index) => {
+      let opacity, coming = 1, going = 0;
+      if (score.stillCaption !== undefined) {
+        opacity = index === score.stillCaption ? 1 : 0;
+      } else {
+        const age = (((story - c.from) % loop) + loop) % loop;
+        const length = (((c.to - c.from) % loop) + loop) % loop || loop;
+        coming = ease(clamp01((age - WAIT) / IN));
+        going = ease(clamp01((age - length) / OUT));
+        opacity = age > length + OUT ? 0 : Math.min(coming, 1 - going);
+      }
+      const line = captions.children[index];
+      line.style.opacity = opacity.toFixed(3);
+      line.style.transform = `translateY(${((1 - coming) * 10 - going * 7).toFixed(2)}px)`;
+      figs.children[index].style.opacity = opacity.toFixed(3);
+    });
+
+    // The faint rose on the page turns a little once in each loop, so it is back where it began at the restart.
+    const turn = 4 * Math.sin((2 * Math.PI * story) / loop);
+    rose.style.transform = `rotate(${(-8 + turn).toFixed(3)}deg)`;
+
+    const k = SCREEN_W / (score.width || 390);
     touches.innerHTML = '';
+    if (score.noTouches) return;
     for (const ev of score.events || []) {
-      let p = ev.tap || ev.hold || ev.at;          // "at": where a button press lands, for the indicator only
+      const p = ev.tap || ev.hold || ev.at;
       if (!p) continue;
       const tail = ev.hold ? 0.7 + TAIL : TAIL;
       const age = now - ev.t;
@@ -82,8 +154,8 @@
       d.className = 'touch';
       d.style.left = p[0] * k + 'px';
       d.style.top = p[1] * k + 'px';
-      d.style.opacity = Math.max(0, Math.min(fadeIn, fadeOut));
-      d.style.transform = `scale(${age < 0 ? 1.15 : 0.82 + 0.18 * Math.max(0, fadeOut)})`;
+      d.style.opacity = Math.max(0, Math.min(fadeIn, fadeOut)).toFixed(3);
+      d.style.transform = `scale(${(age < 0 ? 1.16 - 0.16 * fadeIn : 0.84 + 0.16 * Math.max(0, fadeOut)).toFixed(3)})`;
       touches.appendChild(d);
     }
   };

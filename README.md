@@ -5,7 +5,12 @@ seed grows into a plant that rings a bell note and sends out a ripple, and
 when a ripple reaches another plant, that plant answers with a quieter echo.
 Leave it alone and the garden keeps playing by itself.
 
-<img src="assets/screenshot.png" alt="Sound Garden on a phone: nine small plants drawn in green ink on cream paper, from clover at the bottom to daffodils at the top, with fine ripples spreading between them" width="280">
+<picture>
+  <source media="(prefers-reduced-motion: reduce)" srcset="docs/preview.jpg">
+  <img src="docs/preview.gif" width="400" alt="Animation of the Sound Garden app on a cream botanical page: taps plant ten drawn plants up the phone screen, from a leafy seedling to a daffodil, each ringing a fine green ripple; the garden rests, wakes in a rising run, then clears.">
+</picture>
+
+A [still picture](docs/preview.jpg) of the same moment is also in `docs`.
 
 ## How it plays
 

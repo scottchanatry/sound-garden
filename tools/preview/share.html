@@ -1,0 +1,57 @@
+<!doctype html>
+<meta charset="utf-8">
+<!-- Link-preview card, 1200 x 630, in the look of the "Plate" scene: wordmark and one line on the left,
+     the phone (one real recorded frame) on the right, cropped by the bottom edge. Important content stays
+     inside the middle 1000 x 520 (x 100-1100, y 55-575). -->
+<style>
+  @font-face { font-family: 'Fraunces'; font-style: normal; src: url('../../assets/fonts/Fraunces-Regular.ttf'); }
+  @font-face { font-family: 'Fraunces'; font-style: italic; src: url('../../assets/fonts/Fraunces-Italic.ttf'); }
+  :root { --paper: #FAF8EE; --ink: #1F3D2E; --soft: #6C8A72; --hair: #C3D1B8; }
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    position: relative;
+    background:
+      radial-gradient(48% 70% at 78% 100%, rgba(203,225,193,.62) 0%, rgba(203,225,193,0) 72%),
+      radial-gradient(40% 50% at 6% 0%, #FFFEF9 0%, rgba(255,254,249,0) 70%),
+      var(--paper);
+    font-family: 'Fraunces', serif; color: var(--ink);
+    -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision;
+  }
+  .plate { position: absolute; left: 26px; top: 26px; right: 26px; bottom: -20px; border: 1.5px solid rgba(31,61,46,.13); border-radius: 8px; background: rgba(255,255,255,.30); }
+  .rose { position: absolute; left: 104px; top: 104px; width: 150px; height: 150px; color: var(--ink); opacity: .2; transform: rotate(-8deg); }
+  .rose svg { width: 100%; height: 100%; overflow: visible; }
+  .wordmark { position: absolute; left: 112px; top: 276px; font-size: 82px; line-height: 92px; letter-spacing: -.02em; white-space: nowrap; color: #1F3D2E; }
+  .wordmark i { font-style: italic; }
+  .rule { position: absolute; left: 115px; top: 398px; width: 56px; height: 1.5px; background: var(--hair); }
+  .line { position: absolute; left: 112px; top: 422px; font-size: 31px; line-height: 46px; font-style: italic; color: #3B5A48; white-space: nowrap; }
+  .phone {
+    position: absolute; left: 684px; top: 64px; width: 392px; height: 849px; padding: 10px; border-radius: 58px;
+    background: linear-gradient(145deg, #2C3D33 0%, #1A271F 60%, #121C16 100%);
+    box-shadow: 0 0 0 1.5px rgba(255,255,255,.32) inset, 0 2px 0 1px rgba(16,26,20,.9),
+      0 40px 70px -30px rgba(31,61,46,.38), 0 0 0 1px rgba(31,61,46,.22);
+  }
+  .screen { position: relative; width: 392px; height: 849px; border-radius: 48px; overflow: hidden; background: #FDFBF3; }
+  .screen img { display: block; width: 392px; height: 849px; }
+  .island { position: absolute; top: 12px; left: 50%; width: 90px; height: 26px; margin-left: -45px; border-radius: 13px; background: #0D1410; }
+</style>
+<div class="plate"></div>
+<div class="rose"><svg viewBox="0 0 64 64">
+<path d="M32 32C32.73 20.93 38.97 14.04 49.81 8.96C47.88 22.07 42.64 29.86 32 32ZM32 32C41.8 36.93 45.6 45.21 45.96 56.92C34.67 50.17 29.65 42.44 32 32ZM32 32C22.39 37.05 13.36 34.18 3.51 24.84C15.11 22.31 24.34 23.86 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M35.82 27.63Q40.95 21.31 45.83 14.76M34.44 37.14Q38.15 44.21 42.21 51.12M26.23 31.03Q18.22 29.28 10.27 27.08" fill="none" stroke="currentColor" stroke-width="0.77" opacity="1"/>
+<path d="M32 32C29.45 28.17 23.16 22.29 22.86 16.28C22.42 11.65 23.26 8.47 26.49 8.65C29.01 8.79 30.37 9.61 31.24 10.76C31.81 9.69 32.96 9.01 35.48 9.15C38.72 9.33 40.39 12.65 40.83 17.29C41.13 23.29 34.84 28.47 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M32 32C34.38 28.33 37.24 20.8 42.65 19.21C46.84 18.08 50.21 18.53 51.29 21.59C52.12 23.96 51.87 25.32 51.09 26.25C52.34 26.67 53.44 27.7 54.28 30.07C55.35 33.13 52.82 35.06 48.62 36.19C43.22 37.78 36.17 33.42 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M32 32C36.18 33.7 44.32 35.12 47.24 40.26C49.42 44.24 49.85 47.7 47.09 49.39C44.94 50.7 43.52 50.72 42.39 50.13C42.29 51.47 41.56 52.77 39.41 54.08C36.64 55.77 34.06 53.62 31.87 49.63C28.96 44.5 31.57 36.52 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M32 32C32.01 36.48 33.84 44.57 30.44 49.26C27.86 52.88 25.07 54.67 22.49 52.71C20.48 51.19 19.88 49.85 19.92 48.53C18.74 48.97 17.32 48.8 15.32 47.27C12.74 45.31 13.52 42 16.11 38.37C19.51 33.69 27.71 33.21 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M32 32C27.56 32.97 20 36.47 14.6 34C10.45 32.07 8.07 29.57 9.38 26.61C10.41 24.3 11.58 23.46 12.87 23.27C12.17 22.15 12.02 20.69 13.04 18.38C14.36 15.42 17.77 15.63 21.92 17.55C27.32 20.03 29.76 28.04 32 32Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M32.17 24.18Q32.1 21.41 31.97 18.63M38.98 29.67Q41.47 28.91 43.97 28.17M35.95 38.63Q37.32 40.99 38.67 43.36M27.47 38.06Q25.89 40.21 24.32 42.37M24.91 28.82Q22.42 27.68 19.92 26.54M33.67 27.28L34.89 24.44M36.39 29.61L38.23 28.46M36.25 34.65L38.27 36.14M33.52 36.77L34.38 38.9M28.79 35.84L27.59 37.55M27.02 31.46L24.65 30.96M28.47 28.44L26.75 27.02" fill="none" stroke="currentColor" stroke-width="0.77" opacity="0.35"/>
+<path d="M32 37C29.24 37 27 34.76 27 32C27 29.24 29.24 27 32 27C34.76 27 37 29.24 37 32C37 34.76 34.76 37 32 37Z" fill="#FBFAF3" stroke="currentColor" stroke-width="0.90" opacity="1"/>
+<path d="M34.54 25.22C34.09 25.08 33.88 24.62 34.08 24.19C34.28 23.75 34.8 23.52 35.25 23.66C35.7 23.8 35.9 24.26 35.7 24.69C35.51 25.12 34.99 25.36 34.54 25.22ZM37.59 28.87C37.41 28.5 37.54 28.01 37.89 27.79C38.24 27.56 38.68 27.67 38.86 28.05C39.04 28.42 38.91 28.91 38.56 29.14C38.21 29.36 37.77 29.24 37.59 28.87ZM37.58 35.61C37.81 35.19 38.31 35.09 38.69 35.38C39.07 35.68 39.19 36.27 38.96 36.69C38.73 37.1 38.24 37.2 37.86 36.9C37.47 36.6 37.35 36.03 37.58 35.61ZM34.09 38.21C34.48 38.11 34.93 38.34 35.09 38.72C35.26 39.09 35.07 39.49 34.68 39.59C34.28 39.69 33.83 39.47 33.66 39.09C33.5 38.71 33.69 38.32 34.09 38.21ZM28 36.94C28.3 37.22 28.35 37.72 28.12 38.06C27.9 38.4 27.48 38.45 27.18 38.18C26.89 37.9 26.83 37.4 27.06 37.05C27.28 36.71 27.71 36.66 28 36.94ZM25.52 31.16C25.5 31.65 25.09 31.95 24.61 31.84C24.13 31.72 23.76 31.22 23.78 30.74C23.8 30.25 24.2 29.96 24.69 30.08C25.17 30.19 25.54 30.68 25.52 31.16ZM27.32 27.48C27.02 27.74 26.52 27.74 26.2 27.49C25.88 27.25 25.86 26.84 26.16 26.58C26.46 26.32 26.97 26.3 27.29 26.55C27.61 26.8 27.62 27.22 27.32 27.48Z" fill="currentColor" stroke="none"/>
+</svg></div>
+<div class="wordmark">Sound <i>Garden</i></div>
+<div class="rule"></div>
+<div class="line">Plant a sound. Let the garden play.</div>
+<div class="phone"><div class="screen"><img id="frame" alt=""><div class="island"></div></div></div>
+<script>
+  const img = document.getElementById('frame');
+  window.renderFrame = async ({ frameUrl }) => { img.src = frameUrl; await img.decode(); await document.fonts.ready; };
+</script>
