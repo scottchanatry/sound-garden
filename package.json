@@ -5,11 +5,17 @@
   "dependencies": {
     "expo": "~58.0.25",
     "expo-audio": "~58.0.12",
+    "expo-font": "~58.0.12",
     "expo-haptics": "~58.0.8",
+    "expo-linear-gradient": "~58.0.4",
+    "expo-splash-screen": "~58.0.14",
     "expo-status-bar": "~58.0.5",
+    "expo-system-ui": "~58.0.7",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-native": "0.88.1",
+    "react-native-safe-area-context": "~5.11.1",
+    "react-native-svg": "15.16.0",
     "react-native-web": "^0.21.4"
   },
   "scripts": {
@@ -21,7 +27,7 @@
     "tones": "node scripts/make-tones.js",
     "icons": "python3 scripts/make-icons.py"
   },
-  "description": "Plant dots that ripple and chime. A slow, generative instrument for iOS and Android.",
+  "description": "Plant seeds that bloom, ripple and chime. A slow, generative instrument for iOS and Android.",
   "license": "MIT",
   "private": true
 }

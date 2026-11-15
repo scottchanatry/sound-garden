@@ -5,14 +5,14 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.scottchanatry.soundgarden"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#0B1020",
+        "backgroundColor": "#FDFBF3",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -30,9 +30,18 @@
           "recordAudioAndroid": false,
           "enableBackgroundPlayback": false
         }
+      ],
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#FDFBF3",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 160
+        }
       ]
     ],
-    "backgroundColor": "#0B1020",
-    "description": "Plant dots that ripple and chime. A slow, generative instrument."
+    "backgroundColor": "#FDFBF3",
+    "description": "Plant seeds that bloom, ripple and chime. A slow, generative instrument."
   }
 }
