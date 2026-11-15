@@ -1,0 +1,27 @@
+{
+  "name": "sound-garden",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "expo": "~58.0.25",
+    "expo-audio": "~58.0.12",
+    "expo-haptics": "~58.0.8",
+    "expo-status-bar": "~58.0.5",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-web": "^0.21.4"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "test": "node scripts/test-garden.mjs",
+    "tones": "node scripts/make-tones.js",
+    "icons": "python3 scripts/make-icons.py"
+  },
+  "description": "Plant dots that ripple and chime. A slow, generative instrument for iOS and Android.",
+  "license": "MIT",
+  "private": true
+}
