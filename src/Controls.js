@@ -1,25 +1,8 @@
 import { memo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
 
-import { PauseIcon, PlayIcon, RakeIcon, SeedsIcon } from './icons';
+import { PauseIcon, PlayIcon, RakeIcon, SeedsIcon, UndoIcon } from './icons';
 import { CARD, CARD_OFF, CARD_SHADOW, HAIRLINE, INK, INK_OFF, KEY_SHADOW, LEAF, PAPER } from './theme';
-
-/** An arrow turning back, for putting plants back. Drawn like the glyphs in icons.js: 24 x 24, the same weight of line. */
-function UndoIcon({ size = 24, color = INK }) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24">
-      <Path
-        d="M8.6 5.2 4.8 9l3.8 3.8M4.8 9h9.4a5.3 5.3 0 0 1 0 10.6H9.4"
-        fill="none"
-        stroke={color}
-        strokeWidth={1.8}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </Svg>
-  );
-}
 
 /**
  * A quiet key: white paper with a hairline edge, an icon and a word. Pressed,
@@ -98,7 +81,7 @@ const styles = StyleSheet.create({
   pill: {
     flex: 1,
     minWidth: 92,
-    maxWidth: 132,
+    maxWidth: 148,
     minHeight: 50,
     paddingHorizontal: 4,
     paddingVertical: 8,

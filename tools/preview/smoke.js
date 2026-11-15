@@ -95,6 +95,9 @@ const HEIGHT = 844;
       await tap(WIDTH / 2, 8);
       await tap(3, (bed.top + bed.bottom) / 2);
       await tap(WIDTH / 2, bed.top - 26);
+      // A browser touch at x = 0 or y = 0 arrives with no position at all.
+      await tap(0, (bed.top + bed.bottom) / 2);
+      await tap(WIDTH / 2, 0);
       check('touches outside the bed plant nothing', (await count()) === 0 && (await seeds()) === 0, await count());
     }
 
@@ -123,6 +126,10 @@ const HEIGHT = 844;
       check('sliding off a held dot keeps it', (await count()) === 4, await count());
       await hold(900); await release();
       check('holding it again removes it', (await count()) === 3, await count());
+      // When the offer ends, Clear takes Undo's place; a press meant for Undo must not clear the garden.
+      await run(4500);
+      if (await has('clear')) await press('clear');
+      check('a late press on Undo does not clear the garden', (await count()) === 3, await count());
     }
 
     const p0 = await plays(); await run(9500); const p1 = await plays();

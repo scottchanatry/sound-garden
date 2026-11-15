@@ -2,8 +2,10 @@ import { memo } from 'react';
 import { StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-import { BED_GAP } from './garden';
 import { PAPER, PAPER_SAGE, wash } from './theme';
+
+/** How far below the header, and above the controls, a scrim takes to fade out. */
+const FADE_LENGTH = 34;
 
 // How solid a scrim is across its fading edge, from the solid side to the
 // clear side. The ease at both ends keeps the edge from showing as a line.
@@ -30,8 +32,8 @@ const TOP = { x: 0.5, y: 0 };
  */
 function Scrims({ headerBottom, controlsTop, height }) {
   const footer = height - controlsTop;
-  const upper = fading(PAPER, headerBottom, BED_GAP);
-  const lower = fading(PAPER_SAGE, footer, BED_GAP);
+  const upper = fading(PAPER, headerBottom, FADE_LENGTH);
+  const lower = fading(PAPER_SAGE, footer, FADE_LENGTH);
 
   return (
     <>
@@ -39,7 +41,7 @@ function Scrims({ headerBottom, controlsTop, height }) {
         pointerEvents="none"
         colors={upper.colors}
         locations={upper.locations}
-        style={[styles.scrim, { top: 0, height: headerBottom + BED_GAP }]}
+        style={[styles.scrim, { top: 0, height: headerBottom + FADE_LENGTH }]}
       />
       <LinearGradient
         pointerEvents="none"
@@ -47,7 +49,7 @@ function Scrims({ headerBottom, controlsTop, height }) {
         locations={lower.locations}
         start={BOTTOM}
         end={TOP}
-        style={[styles.scrim, { bottom: 0, height: footer + BED_GAP }]}
+        style={[styles.scrim, { bottom: 0, height: footer + FADE_LENGTH }]}
       />
     </>
   );

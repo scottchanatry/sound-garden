@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Easing, StyleSheet, View } from 'react-native';
+import { Animated, AppState, Easing, StyleSheet, View } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -11,7 +11,7 @@ import EmptyState from './src/EmptyState';
 import Header from './src/Header';
 import RippleLayer from './src/RippleLayer';
 import Scrims from './src/Scrims';
-import { HoldRing, Plant, nameOfPlant, plantMotion, ringPlant } from './src/Plant';
+import { HoldRing, LIFT, Plant, nameOfPlant, plantMotion, ringPlant } from './src/Plant';
 import {
   MAX_SEEDS,
   RING_RADIUS,
@@ -39,6 +39,8 @@ const FONTS = {
 /** A plant is pulled up when it has been held this long, unless the finger slips further than HOLD_SLIP points. */
 const HOLD_MS = 650;
 const HOLD_SLIP = 12;
+/** A finger that slides this far across open ground is a stray swipe, and plants nothing. */
+const SWIPE_SLIP = 24;
 const SCATTER_SEEDS = 6;
 const SCATTER_GAP_MS = 220;
 /** After Play, the plants ring one after another, this far apart, so the garden is heard at once. */
@@ -47,9 +49,13 @@ const WAKE_GAP_MS = 150;
 /** How long Undo is offered after plants are taken away. It ignores the first moment, in case Clear was tapped twice. */
 const UNDO_MS = 5000;
 const UNDO_GUARD_MS = 350;
+/** When the offer ends, Clear takes Undo's place; it ignores presses this long, in case they were meant for Undo. */
+const CLEAR_GUARD_MS = 600;
+/** Echoes still on their way when the garden is paused are heard for this long, then dropped. */
+const ECHO_AFTER_PAUSE_MS = 1200;
 
 const BED_ACTIONS = [
-  { name: 'activate' },
+  { name: 'activate', label: 'Plant a seed' },
   { name: 'low', label: 'Plant a low note' },
   { name: 'middle', label: 'Plant a middle note' },
   { name: 'high', label: 'Plant a high note' },
@@ -100,6 +106,7 @@ function Garden() {
   // The latest values, for touches and for timers that fire later.
   const seedsRef = useRef(seeds);
   const playingRef = useRef(playing);
+  const pausedAt = useRef(0);
   const bedRef = useRef(bed);
   bedRef.current = bed;
 
@@ -140,19 +147,22 @@ function Garden() {
 
   // A seed sounds its note and sends out a ripple. A full pulse reaches other
   // seeds, and each one it reaches answers with a quieter echo. Echoes do not
-  // spread further, so the garden always settles.
+  // spread further, so the garden always settles. Echoes sent before a pause
+  // stop arriving soon after it, so a resting garden soon falls quiet.
   const pulse = useCallback(
-    (id, echo = false) => {
+    (id, echo = false, sent = 0) => {
       const seed = seedsRef.current.find((item) => item.id === id);
       if (!seed) return;
+      if (echo && pausedAt.current > sent && Date.now() - pausedAt.current > ECHO_AFTER_PAUSE_MS) return;
 
       ring(seed.note, echo ? 0.35 : 0.9);
       if (ripples.current) ripples.current.add(seed.x, seed.y, echo);
       ringPlant(seed, echo);
 
       if (!echo) {
+        const now = Date.now();
         for (const hit of reached(seed, seedsRef.current)) {
-          later(() => pulse(hit.id, true), hit.delay);
+          later(() => pulse(hit.id, true, now), hit.delay);
         }
       }
     },
@@ -190,13 +200,35 @@ function Garden() {
     [startBeat]
   );
 
+  // A phone stops timers while the app is away. Rather than let every overdue
+  // beat fire at once on return, the beats stop on leaving and the garden wakes
+  // again with its rising run.
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        if (playingRef.current && beats.current.size === 0) wake(seedsRef.current);
+        return;
+      }
+      stopAllBeats();
+      timers.current.forEach(clearTimeout);
+      timers.current.clear();
+      pending.current = [];
+      setScattering(false);
+    });
+    return () => subscription.remove();
+  }, [stopAllBeats, wake]);
+
   const toggle = useCallback(() => {
     prepareSound();
     const next = !playingRef.current;
     playingRef.current = next;
     setPlaying(next);
-    if (next) wake(seedsRef.current);
-    else stopAllBeats();
+    if (next) {
+      wake(seedsRef.current);
+    } else {
+      pausedAt.current = Date.now();
+      stopAllBeats();
+    }
     announce(next ? 'Garden playing' : 'Garden resting');
   }, [stopAllBeats, wake]);
 
@@ -216,14 +248,11 @@ function Garden() {
     (place, quiet = false) => {
       const ground = bedRef.current;
       if (!ground || seedsRef.current.length >= MAX_SEEDS) return;
-      const seed = {
-        id: nextId++,
-        x: place.x,
-        y: place.y,
-        note: noteForY(place.y, ground),
-        period: periodForX(place.x, ground),
-        ...plantMotion(),
-      };
+      const note = noteForY(place.y, ground);
+      const period = periodForX(place.x, ground);
+      // A seed with no proper place would have no note or beat, so it is never planted.
+      if (!Number.isFinite(note) || !Number.isFinite(period)) return;
+      const seed = { id: nextId++, x: place.x, y: place.y, note, period, ...plantMotion() };
       setGarden([...seedsRef.current, seed]);
       pulse(seed.id);
       if (playingRef.current) startBeat(seed, seed.period);
@@ -233,9 +262,10 @@ function Garden() {
   );
 
   // For a few seconds after plants are taken away they can be put back.
+  // `since` is when the offer last began or ended; both guards count from it.
   const endUndo = useCallback(() => {
     clearTimeout(undo.current.timer);
-    undo.current = { seeds: [], timer: null, since: 0 };
+    undo.current = { seeds: [], timer: null, since: Date.now() };
     setCanUndo(false);
   }, []);
 
@@ -285,6 +315,7 @@ function Garden() {
 
   /** Empties the bed and stops everything still to come: echoes on their way and seeds still in the air. A cleared garden is ready to play. */
   const clear = useCallback(() => {
+    if (Date.now() - undo.current.since < CLEAR_GUARD_MS) return;
     timers.current.forEach(clearTimeout);
     timers.current.clear();
     pending.current = [];
@@ -307,19 +338,26 @@ function Garden() {
     const ground = bedRef.current;
     if (!ground) return;
     const count = Math.min(SCATTER_SEEDS, MAX_SEEDS - seedsRef.current.length);
-    const places = scatter(count, seedsRef.current, ground);
+    const places = scatter(count, [...seedsRef.current, ...pending.current], ground);
     if (places.length === 0) {
       refuse('No room to scatter more seeds');
       return;
     }
     pending.current = places;
     setScattering(true);
+    let landed = 0;
     places.forEach((place, index) => {
       later(() => {
         pending.current = pending.current.filter((other) => other !== place);
         // A place is skipped if a plant was tapped in beside it while it was in the air.
-        if (!seedAt(place, seedsRef.current, RING_RADIUS)) plant(place, true);
-        if (index === places.length - 1) setScattering(false);
+        if (!seedAt(place, seedsRef.current, RING_RADIUS) && seedsRef.current.length < MAX_SEEDS) {
+          plant(place, true);
+          landed += 1;
+        }
+        if (index === places.length - 1) {
+          setScattering(false);
+          announce(`${landed} ${landed === 1 ? 'seed' : 'seeds'} planted, ${seedsRef.current.length} of ${MAX_SEEDS}`);
+        }
       }, index * SCATTER_GAP_MS);
     });
     haptic.light();
@@ -327,6 +365,7 @@ function Garden() {
   }, [later, plant, refuse]);
 
   // For screen readers the bed plants a seed by itself: anywhere, or in its low, middle or high third.
+  // A double tap plants anywhere; on an iPhone it arrives as an accessibility tap, not as an action.
   const onBedAction = useCallback(
     (event) => {
       const ground = bedRef.current;
@@ -340,6 +379,7 @@ function Garden() {
     },
     [plant, refuse]
   );
+  const onBedTap = useCallback(() => onBedAction({ nativeEvent: { actionName: 'activate' } }), [onBedAction]);
 
   // Touch: tap open ground to plant, tap a plant to ring it, hold a plant to pull it up.
   const endHold = useCallback(() => {
@@ -369,13 +409,14 @@ function Garden() {
     [endHold, holdAt, holdProgress, remove]
   );
 
-  // A finger that slides off a plant has changed its mind: the plant is neither pulled up nor rung.
+  // A finger that slides off a plant has changed its mind: the plant is neither
+  // pulled up nor rung. A long slide across open ground plants nothing either.
   const onTouchMove = useCallback(
     (event) => {
       const current = touch.current;
-      if (!current || current.over || current.seedId == null) return;
+      if (!current || current.over) return;
       const point = { x: event.nativeEvent.locationX, y: event.nativeEvent.locationY };
-      if (distance(point, current.point) > HOLD_SLIP) {
+      if (distance(point, current.point) > (current.seedId == null ? SWIPE_SLIP : HOLD_SLIP)) {
         clearTimeout(current.timer);
         current.over = true;
         endHold();
@@ -433,7 +474,7 @@ function Garden() {
   const count = seeds.length;
 
   // Bottom to top: paper, ripples, the two scrims that fade them out, the
-  // ground with its plants, then the header and the controls.
+  // empty state, the ground with its plants, then the header and the controls.
   return (
     <View style={styles.screen} onLayout={onScreenLayout}>
       <StatusBar style="dark" />
@@ -467,6 +508,7 @@ function Garden() {
             accessibilityHint="Double tap to plant a seed. The actions plant a low, a middle or a high note."
             accessibilityActions={BED_ACTIONS}
             onAccessibilityAction={onBedAction}
+            onAccessibilityTap={onBedTap}
             style={[styles.bed, { left: bed.left, top: bed.top, width: bed.right - bed.left, height: bed.bottom - bed.top }]}
           />
         )}
@@ -474,6 +516,7 @@ function Garden() {
           <Plant
             key={seed.id}
             seed={seed}
+            lift={bed ? Math.min(LIFT, seed.y - bed.top + 8) : LIFT}
             resting={!playing}
             leaving={index >= count}
             still={still}

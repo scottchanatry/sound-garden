@@ -1,18 +1,18 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle, Defs, Path, RadialGradient, Stop } from 'react-native-svg';
 
 import { sprig } from './botany';
-import { USE_NATIVE_DRIVER } from './motion';
+import { USE_NATIVE_DRIVER, useValue } from './motion';
 import { HAIRLINE, LINE, PAPER, PAPER_MID, PAPER_SAGE, SAGE, WASH, wash } from './theme';
 
 // A wash is drawn small and scaled up, which keeps it cheap: it is only a soft
 // blur of green. The lower one is the weaker, so the foot of the page stays bright.
 const WASH_SIZE = 150;
 const WASHES = [
-  { id: 'wash-low', strength: 0.2, left: '0%', top: '78%', grow: 3.8 },
-  { id: 'wash-high', strength: 0.22, left: '100%', top: '26%', grow: 3.2 },
+  { id: 'wash-low', strength: 0.2, left: '0%', top: '64%', grow: 3.2 },
+  { id: 'wash-high', strength: 0.22, left: '100%', top: '40%', grow: 3.2 },
 ];
 
 // Two sprigs of line-art lean in from the edges of the page: one climbing the
@@ -36,7 +36,7 @@ const HANGING = sprig({
 
 /** A value that sways slowly between 0 and 1 for ever, or stays where it is while `still`. */
 function useSway(duration, still) {
-  const sway = useState(() => new Animated.Value(0))[0];
+  const sway = useValue(0);
   useEffect(() => {
     if (still) return undefined;
     const leg = (toValue) => Animated.timing(sway, { toValue, duration, easing: Easing.inOut(Easing.sin), useNativeDriver: USE_NATIVE_DRIVER });
@@ -50,7 +50,7 @@ function useSway(duration, still) {
 const Sprig = memo(function Sprig({ art, style, sway, lean }) {
   const rotate = useMemo(
     () => sway.interpolate({ inputRange: [0, 1], outputRange: [`${-lean}deg`, `${lean}deg`] }),
-    [sway, lean],
+    [sway, lean]
   );
   return (
     <Animated.View style={[styles.sprig, style, { transform: [{ rotate }] }]}>

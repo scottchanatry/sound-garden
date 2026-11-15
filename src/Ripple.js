@@ -54,8 +54,8 @@ const PULSE = {
   life: (RIPPLE_REACH / RIPPLE_SPEED) * 1000,
   rings: [
     ...ring(RIPPLE_REACH, LEAD, [
-      { line: 5, share: [[0, 1], [0.16, 1], [0.27, 0]] },
-      { line: 2.2, share: [[0.16, 0], [0.27, 1], [0.47, 1], [0.6, 0]] },
+      { line: 5, share: [[0, 1], [0.12, 1], [0.22, 0]] },
+      { line: 2.2, share: [[0.12, 0], [0.22, 1], [0.47, 1], [0.6, 0]] },
       { line: 1.3, share: [[0.47, 0], [0.6, 1], [1, 1]] },
     ]),
     ...ring(RIPPLE_REACH, FOLLOWER, [{ line: 3.4, share: [[0, 1]] }], 30),
@@ -68,8 +68,8 @@ const ECHO = {
   from: 0.03,
   life: (ECHO_REACH / RIPPLE_SPEED) * 1000,
   rings: ring(ECHO_REACH, [[0, 0], [0.1, 0.46], [0.5, 0.24], [0.9, 0.05], [1, 0]], [
-    { line: 3, share: [[0, 1], [0.28, 1], [0.42, 0]] },
-    { line: 1.3, share: [[0.28, 0], [0.42, 1], [1, 1]] },
+    { line: 3, share: [[0, 1], [0.24, 1], [0.36, 0]] },
+    { line: 1.3, share: [[0.24, 0], [0.36, 1], [1, 1]] },
   ]),
 };
 

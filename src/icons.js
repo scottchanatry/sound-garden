@@ -27,32 +27,30 @@ export function PlayIcon({ size = 24, color = INK }) {
 }
 
 // The leaf leans to the upper right and curves a little, on a short stalk.
-const LEAF = leafPath(6.4, 17.6, 45, 18, 10.4, 0.08);
+const LEAF_SHAPE = leafPath(6.4, 17.6, 45, 18, 10.4, 0.08);
 const LEAF_RIB = 'M4 20C7.6 16.6 11.2 13.4 14.6 10.6';
 
 /** A leaf with its rib. */
 export function LeafIcon({ size = 24, color = INK }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
-      <Path d={LEAF} {...line(color)} />
+      <Path d={LEAF_SHAPE} {...line(color)} />
       <Path d={LEAF_RIB} {...line(color)} />
     </Svg>
   );
 }
 
-// Five seeds of mixed size, thrown from the left and falling in an arc. Each
+// Three seeds of falling sizes, dropping on a diagonal from the upper left. Each
 // is [x, y, the way it points, length, width], measured from its blunt end.
 const SEEDS = [
-  [3.2, 17.6, 20, 7.2, 4.6],
-  [6.6, 7.4, 70, 5.2, 3.4],
-  [12.9, 3.6, 125, 6.6, 4.2],
-  [19.2, 10.2, 165, 4.8, 3.1],
-  [20.4, 17.4, 185, 4, 2.6],
+  [4.2, 4.6, 120, 8, 4.8],
+  [10.8, 11.6, 150, 6.4, 4],
+  [16.6, 16.6, 112, 5.2, 3.3],
 ]
   .map(([x, y, angle, length, width]) => leafPath(x, y, angle, length, width))
   .join('');
 
-/** A handful of seeds in mid-air. */
+/** A few seeds in mid-air. */
 export function SeedsIcon({ size = 24, color = INK }) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
@@ -68,6 +66,15 @@ export function RakeIcon({ size = 24, color = INK }) {
       <Path d="M21.1 2L11.15 13.9" {...line(color)} />
       <Path d="M6.1 9.65l10.1 8.5" {...line(color)} />
       <Path d="M6.1 9.65l-3.2 3.85M9.45 12.5l-3.2 3.85M12.85 15.3l-3.2 3.85M16.2 18.15l-3.2 3.85" {...line(color)} />
+    </Svg>
+  );
+}
+
+/** An arrow turning back, for putting plants back. */
+export function UndoIcon({ size = 24, color = INK }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M8.6 5.2 4.8 9l3.8 3.8M4.8 9h9.4a5.3 5.3 0 0 1 0 10.6H9.4" {...line(color)} />
     </Svg>
   );
 }

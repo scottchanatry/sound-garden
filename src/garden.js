@@ -18,9 +18,9 @@ export const RING_RADIUS = 44;
 export const SCATTER_SPACING = 60;
 
 /** Open paper kept at the sides of the planting bed. */
-export const BED_SIDE = 28;
-/** Open paper between the bed and the header above it or the controls below it: room for a plant's own leaves. */
-export const BED_GAP = 34;
+export const BED_SIDE = 40;
+/** Open paper between the bed and the header above it or the controls below it: room for a plant's leaves and its caption. */
+export const BED_GAP = 48;
 /** A touch this far outside the bed still counts, and lands on its edge. */
 export const BED_SLACK = 20;
 
@@ -44,6 +44,8 @@ export function bedBetween(width, headerBottom, controlsTop) {
  * when it is only just outside, and nowhere (null) when it is further out.
  */
 export function placeInBed(point, bed, slack = BED_SLACK) {
+  // A browser can report a touch at the very edge of the window without a position.
+  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) return null;
   const x = clamp(point.x, bed.left, bed.right);
   const y = clamp(point.y, bed.top, bed.bottom);
   if (Math.abs(x - point.x) > slack || Math.abs(y - point.y) > slack) return null;
@@ -84,10 +86,6 @@ export const NOTE_COLORS = [
   '#FFFFFF', // white
   '#F4E2A8', // butter
 ];
-
-export function colorForNote(note) {
-  return NOTE_COLORS[clamp(note, 0, NOTE_COUNT - 1)];
-}
 
 export function distance(a, b) {
   return Math.hypot(a.x - b.x, a.y - b.y);

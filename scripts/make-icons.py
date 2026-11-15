@@ -70,7 +70,7 @@ def lobed(at, length, width, dip):
     return mirrored(at, [
         (length * 0.16, half * 0.3), (length * 0.4, half), (length * 0.66, half),
         (length * 0.86, half), (length, half * 0.86), (length, half * 0.5),
-        (length, half * 0.22), (length * (1 - dip / 2), 0), (length * (1 - dip), 0),
+        (length, half * 0.22), (length * (1 - dip * 0.4), half * 0.08), (length * (1 - dip), 0),
     ])
 
 
@@ -198,9 +198,9 @@ def silhouette(size, box, line):
     return sheet.shrunk()
 
 
-RINGS = [(0.37, 0.8), (0.445, 0.45)]
+RINGS = [(0.41, 0.8), (0.47, 0.4)]
 
-blossom(1024, 720, 1.05, PAPER, RINGS).convert("RGB").save(OUT / "icon.png")
+blossom(1024, 800, 1.05, PAPER, RINGS).convert("RGB").save(OUT / "icon.png")
 blossom(1024, 1040, 0.75).save(OUT / "splash-icon.png")
 blossom(48, 47, 1.7).save(OUT / "favicon.png")
 # Android adaptive icon: the art stays inside the centre 62 percent, which no mask cuts into.

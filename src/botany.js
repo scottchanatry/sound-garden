@@ -95,7 +95,7 @@ function lobed(at, length, width, dip) {
   return mirrored(at, [
     [length * 0.16, half * 0.3], [length * 0.4, half], [length * 0.66, half],
     [length * 0.86, half], [length, half * 0.86], [length, half * 0.5],
-    [length, half * 0.22], [length * (1 - dip / 2), 0], [length * (1 - dip), 0],
+    [length, half * 0.22], [length * (1 - dip * 0.4), half * 0.08], [length * (1 - dip), 0],
   ]);
 }
 
@@ -136,11 +136,6 @@ function dot(at, along, radius) {
 /** An almond leaf: rounded at the stalk, pointed at the tip, and curving to one side if given a `bend`. */
 export function leafPath(cx, cy, angle, length, width, bend = 0) {
   return leaf(lie(cx, cy, angle, length, bend), length, width);
-}
-
-/** A petal: narrow at the heart of the flower, wide and round at the end. */
-export function petalPath(cx, cy, angle, length, width, bend = 0) {
-  return petal(lie(cx, cy, angle, length, bend), length, width);
 }
 
 /** The rib down the middle of a leaf. */
@@ -213,11 +208,11 @@ function seedling() {
 
 /** Note 1. Three round clover leaflets, each with its pale chevron. */
 function clover() {
-  const leaflets = placed([[-4, 22, 0.4], [119, 19.5, -0.5], [243, 20.5, 0.5]]);
+  const leaflets = placed([[-4, 22, 0.4], [119, 17.5, -0.5], [243, 20, 0.5]]);
   const width = 19;
   const chevron = (at, length) => `M${at(length * 0.4, -width * 0.27)}Q${at(length * 0.74, 0)} ${at(length * 0.4, width * 0.27)}`;
   return [
-    ...apart(leaflets, (at, length) => lobed(at, length, width, 0.15), tint(1)),
+    ...apart(leaflets, (at, length) => lobed(at, length, width, 0.08), tint(1)),
     faint(together(leaflets, chevron)),
     inked(together(leaflets, (at, length) => rib(at, length, 0.16, 0.52))),
     seed(1.8),
@@ -366,7 +361,7 @@ export const PLANT_NAMES = [
  * line, 0 for none) and the `opacity` of that ink.
  */
 export function plantForNote(note) {
-  return PLANTS[Math.min(NOTE_COUNT - 1, Math.max(0, note))];
+  return PLANTS[Math.min(NOTE_COUNT - 1, Math.max(0, note))] || PLANTS[0];
 }
 
 /** Which way round a plant sits, so that two of a kind never look stamped. */

@@ -13,7 +13,6 @@ import {
   TOUCH_RADIUS,
   bandOfBed,
   bedBetween,
-  colorForNote,
   noteForY,
   periodForX,
   placeInBed,
@@ -37,6 +36,8 @@ assert.deepEqual(placeInBed({ x: bed.right + 5, y: bed.bottom + 5 }, bed), { x: 
 assert.equal(placeInBed({ x: 200, y: bed.top - BED_SLACK - 1 }, bed), null, 'a touch on the header does nothing');
 assert.equal(placeInBed({ x: 200, y: 800 }, bed), null, 'a touch among the controls does nothing');
 assert.equal(placeInBed({ x: 2, y: 400 }, bed), null, 'a touch at the very edge of the screen does nothing');
+assert.equal(placeInBed({ x: NaN, y: 400 }, bed), null, 'a touch with no x does nothing');
+assert.equal(placeInBed({ x: 200, y: NaN }, bed), null, 'a touch with no y does nothing');
 
 assert.equal(noteForY(bed.top, bed), NOTE_COUNT - 1, 'top of the bed is the highest note');
 assert.equal(noteForY(bed.bottom, bed), 0, 'bottom of the bed is the lowest note');
@@ -79,8 +80,6 @@ assert.equal(seedAt({ x: 60, y: 300 }, [a, { id: 4, x: 30, y: 300 }], RING_RADIU
 
 assert.equal(NOTE_COLORS.length, NOTE_COUNT, 'every note has its own colour');
 assert.equal(new Set(NOTE_COLORS).size, NOTE_COUNT, 'no two notes share a colour');
-assert.equal(colorForNote(0), NOTE_COLORS[0]);
-assert.equal(colorForNote(NOTE_COUNT - 1), NOTE_COLORS[NOTE_COUNT - 1]);
 
 const gapsOf = (points) => points.flatMap((point, i) => points.slice(i + 1).map((other) => Math.hypot(point.x - other.x, point.y - other.y)));
 

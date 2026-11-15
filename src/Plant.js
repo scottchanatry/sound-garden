@@ -15,12 +15,12 @@ const TWIST = 9;
 /** A resting plant draws in a little and pales. */
 const REST_SCALE = 0.9;
 const REST_INK = 0.75;
-/** A plant that is pulled up lifts this far, in this long, and leaves a fine ring behind. */
-const LIFT = 70;
+/** A plant that is pulled up lifts at most this far (less near the top of the bed), in this long, and leaves a fine ring behind. */
+export const LIFT = 70;
 const LIFT_MS = 600;
 const PUFF = 120;
 /** The ring that closes in while a plant is held starts and ends outside a fingertip. */
-const HOLD_FROM = 120;
+const HOLD_FROM = 100;
 const HOLD_TO = 76;
 
 /** Blossoms, from this note up, shed a little pollen when they ring by themselves or are tapped. */
@@ -53,7 +53,7 @@ export function ringPlant(seed, echo = false) {
   const swell = (value, size) =>
     Animated.sequence([
       timing(value, size, 70, Easing.out(Easing.quad)),
-      Animated.spring(value, { toValue: 0, friction: 5, tension: 90, useNativeDriver: USE_NATIVE_DRIVER }),
+      Animated.spring(value, { toValue: 0, friction: 7, tension: 90, useNativeDriver: USE_NATIVE_DRIVER }),
     ]).start();
   swell(seed.nod, echo ? 0.25 : 1);
   if (echo) return;
@@ -87,13 +87,19 @@ function Speck({ shed, angle, reach }) {
   );
 }
 
+/** What a screen reader can do with a plant. */
+const ACTIONS = [
+  { name: 'activate', label: 'Ring' },
+  { name: 'pull', label: 'Pull up' },
+];
+
 /**
  * A planted seed. It lands as a seed, then its leaves or petals unfurl around
  * it, and for a moment it is captioned with its note like a plate in a flora.
  * It swells each time it rings, draws in while the garden rests, and lifts off
  * the page when it is pulled up. With reduced motion it only fades in and out.
  */
-function PlantedSeed({ seed, resting, leaving, still, onRing, onPull, onGone }) {
+function PlantedSeed({ seed, lift = LIFT, resting, leaving, still, onRing, onPull, onGone }) {
   const { id, x, y, note, nod, twist, shed } = seed;
   const grow = useValue(0);
   const rest = useValue(resting ? 1 : 0);
@@ -147,6 +153,7 @@ function PlantedSeed({ seed, resting, leaving, still, onRing, onPull, onGone }) 
       accessibilityLabel={`${name[0].toUpperCase()}${name.slice(1)}, note ${note + 1} of ${NOTE_COUNT}`}
       accessibilityActions={ACTIONS}
       onAccessibilityAction={(event) => (event.nativeEvent.actionName === 'pull' ? onPull(id) : onRing(id))}
+      onAccessibilityTap={() => onRing(id)}
       style={[styles.anchor, { left: x - MIDDLE, top: y - MIDDLE }]}
     >
       {leaving && !still && (
@@ -180,7 +187,7 @@ function PlantedSeed({ seed, resting, leaving, still, onRing, onPull, onGone }) 
               : {
                   opacity: out.interpolate({ inputRange: [0, 0.55, 1], outputRange: [1, 0.75, 0] }),
                   transform: [
-                    { translateY: out.interpolate({ inputRange: [0, 1], outputRange: [0, -LIFT] }) },
+                    { translateY: out.interpolate({ inputRange: [0, 1], outputRange: [0, -lift] }) },
                     { rotate: out.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '40deg'] }) },
                     { scale: out.interpolate({ inputRange: [0, 1], outputRange: [1, 0.55] }) },
                   ],
@@ -220,11 +227,6 @@ function PlantedSeed({ seed, resting, leaving, still, onRing, onPull, onGone }) 
     </View>
   );
 }
-
-const ACTIONS = [
-  { name: 'activate', label: 'Ring' },
-  { name: 'pull', label: 'Pull up' },
-];
 
 export const Plant = memo(PlantedSeed);
 
@@ -302,7 +304,7 @@ const styles = StyleSheet.create({
     width: HOLD_FROM,
     height: HOLD_FROM,
     borderRadius: HOLD_FROM / 2,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderStyle: 'dashed',
     borderColor: INK,
   },
